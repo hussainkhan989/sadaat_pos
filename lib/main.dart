@@ -6,7 +6,7 @@ import 'package:sadaat_pos/sales.dart';
 import 'package:sadaat_pos/zakat.dart';
 
 import 'Dbhelper.dart';
-import 'new.dart';
+
 
 void main() {
   runApp(MyApp());
@@ -18,12 +18,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sadaat Autos',
       theme: ThemeData(
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.blue , foregroundColor: Colors.white),
         primarySwatch: Colors.blue,
         cardColor: Colors.green,
         fontFamily: 'Roboto',
       ),
       debugShowCheckedModeBanner: false,
-      home: flash(),
+      home: MyHomePage(),
     );
   }
 }
@@ -92,13 +93,13 @@ class _MyHomePageState extends State<MyHomePage> {
       );
 
       setState(() {
-        opacity = 1.0;
-        buttonColor = Colors.green;
+        // Update the UI to reflect the change in item quantity after sale
+        price = selectedItem.buyPrice.toString();
+        sellprice = selectedItem.sellingPrice.toString();
+        quan = selectedItem.quantity.toString();
       });
 
-      print('Item sold successfully!');
     } else {
-      print('Item not found or out of stock');
       await Flushbar(
         title: sctitm.toString(),
         message: "is maybe out of Stock or you didnt add Amount received",
@@ -166,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sadaat Autos'),
+        title: Text('ShopEase Retail POS'),
       ),
       body: SingleChildScrollView(
         physics: ClampingScrollPhysics(),
@@ -175,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Center(
             child: Column(
               children: [
-                TypeAheadField <Item>(textFieldConfiguration: TextFieldConfiguration(
+                TypeAheadField <Item>(textFieldConfiguration: const TextFieldConfiguration(
                   decoration: InputDecoration(
                     labelText: 'Search for items',
                     border: OutlineInputBorder(),
@@ -210,17 +211,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                     } else {
                       // Handle when the item is not found
-                      print('Item not found');
                     }
                   },
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Text(
                   sctitm,
-                  style: TextStyle(fontSize: 50, color: Colors.blue),
+                  style: const TextStyle(fontSize: 50, color: Colors.blue),
                 ),
                // SizedBox(height: 10),
-                Container(
+                SizedBox(
                   height: 100,
                   child: GridView.count(
                     children: [
@@ -285,12 +285,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),*/
 
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Padding(
                   padding: const EdgeInsets.only(right: 50),
                   child: Column(
                     children: [
-                      Container(
+                      SizedBox(
                         width: 250,
                         child: TextField(controller:amtrecieved,
                           keyboardType: TextInputType.number,
@@ -301,14 +301,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             });
                           },
                           decoration: InputDecoration(
-                              label: (Text("Amount Recieved")),
-                              icon: Icon(Icons.attach_money),
+                              label: (const Text("Amount Recieved")),
+                              icon: const Icon(Icons.attach_money),
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))
 
                           ),),
                       ),
-                      SizedBox(height: 10,),
-                      Container(
+                      const SizedBox(height: 10,),
+                      SizedBox(
                         width: 250,
                         child: TextField(controller:q,
                           keyboardType: TextInputType.number,
@@ -319,8 +319,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             });
                           },
                           decoration: InputDecoration(
-                              label: (Text("Quantity")),
-                              icon: Icon(Icons.attach_money),
+                              label: (const Text("Quantity")),
+                              icon: const Icon(Icons.attach_money),
                               border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))
 
                           ),),
@@ -328,22 +328,29 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: 0),
-                    Container(
+                    const SizedBox(width: 0),
+                    SizedBox(
                       height: 80,
                       width: 150,
                       child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          backgroundColor: Colors.blue, // Text color
+                          elevation: 10, // Shadow elevation
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20), // Button border radius
+                          ),),
                         onPressed: handleSoldButtonClick,
-                        child: const Text('Sold'),
+                        child: const Text('Sold' , style: TextStyle(fontSize: 15),),
                       ),
 
                     ),
 
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                    /* Container(
                       height: 80,
                       width: 150,
@@ -385,6 +392,7 @@ class _MyHomePageState extends State<MyHomePage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.black,
+        showUnselectedLabels: true,
         onTap: _onItemTapped,
       ),
     );

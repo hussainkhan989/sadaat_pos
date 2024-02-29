@@ -1,4 +1,4 @@
-package com.example.sadaat_pos
+package com.hussain.shopeasepos
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -89,20 +89,29 @@ class DBHelper {
 
   Future<Database> initDatabase() async {
     final String path = join(await getDatabasesPath(), 'lop.db');
-    return await openDatabase(
+    _database = await openDatabase(
       path,
-      version: 2, // Increment the version to trigger migration
-      onUpgrade: (Database db, int oldVersion, int newVersion) async {
-        if (oldVersion < 2) {
-          await migrateTables(db);
-        }
-      },
+      version: 1, // Increment the version to trigger migration
+      // onUpgrade: (Database db, int oldVersion, int newVersion) async {
+      //   if (oldVersion < 2) {
+      //     await migrateTables(db);
+      //   }
+      // },
       onCreate: (Database db, int version) async {
         await db.execute(
-          'CREATE TABLE items(id INTEGER PRIMARY KEY,profit INTEGER, name TEXT UNIQUE, quantity DOUBLE, buyPrice INTEGER, sellingPrice INTEGER)',
+          'CREATE TABLE items(id INTEGER PRIMARY KEY,profit DOUBLE, name TEXT UNIQUE, quantity DOUBLE, buyPrice DOUBLE, sellingPrice DOUBLE)',
         );
       },
     );
+    await checkAndCreateSalesTable(_database!);
+    return _database!;
+  }
+
+  Future<void> checkAndCreateSalesTable(Database db) async {
+    List<Map<String, dynamic>> tables = await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='sales'");
+    if (tables.isEmpty) {
+      await createSalesTable(db);
+    }
   }
 
   Future<void> migrateTables(Database db) async {
@@ -190,7 +199,7 @@ class DBHelper {
 
   Future<void> createSalesTable(Database db) async {
     await db.execute(
-      'CREATE TABLE sales(id INTEGER PRIMARY KEY, prof INTEGER,soldprice INTEGER, itmname TEXT, itemId INTEGER, quantitySold INTEGER, saleDate DATE)',
+      'CREATE TABLE sales(id INTEGER PRIMARY KEY, prof DOUBLE ,soldprice DOUBLE, itmname TEXT, itemId INTEGER, quantitySold DOUBLE, saleDate DATE)',
     );
   }
 
